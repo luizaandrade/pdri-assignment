@@ -1,0 +1,55 @@
+
+```{r}
+demo <-
+  read_rds(
+    here(
+      "data",
+      "clean",
+      "demo.rds"
+    )
+  )
+```
+
+```{r}
+demo %>%
+  ggplot(
+    aes(gender)
+  ) +
+  geom_bar()
+```
+
+```{r}
+demo %>%
+  ggplot(
+    aes(race)
+  ) +
+  geom_bar()
+```
+
+```{r}
+demo %>%
+  ggplot(
+    aes(bdate)
+  ) +
+  geom_histogram()
+```
+
+
+```{r}
+prior_arrests <-
+  read_rds(
+    here(
+      "data",
+      "clean",
+      "prior_arrests.rds"
+    )
+  )
+```
+
+```{r}
+prior_arrests %>%
+  ggplot(
+    aes(arrest_date)
+  ) +
+  geom_histogram()
+```

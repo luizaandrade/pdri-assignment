@@ -1,0 +1,60 @@
+---
+title: "Reducing re-arrests in Chicago"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: 
+      version: 4
+      bootswatch: sandstone
+    storyboard: true
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(skimr)
+library(here)
+library(tidyverse)
+library(vtable)
+
+data <-
+  read_rds(
+    here(
+      "data",
+      "final",
+      "analysis-data.rds"
+    )
+  )
+```
+
+
+Program background
+==========================================
+
+
+
+
+Data description
+==========================================
+
+# Are covariates balances across treatment groups?
+
+```{r}
+data %>%
+  select(
+    treat,
+    prior_arrests,
+    race,
+    gender,
+    age
+  ) %>%
+  sumtable(group = "treat", group.test = TRUE)
+```
+
+***
+
+The data is balanced on gender and race, but not on age or prior arrests
+
+Overall impact
+==========================================
+
+Who can benefit the most?
+==========================================
