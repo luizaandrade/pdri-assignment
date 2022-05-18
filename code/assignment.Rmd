@@ -747,15 +747,15 @@ plot <-
 
 ## Does the program reduce the likelihood of re-arrest before disposition?
 
-To determine whether the program reduced the likelihood of re-arrest before disposition, we will run a regression of whether a re-arrest occurred on the treatment status. Given that defendant's age and number of prior arrests were not balanced, we will also include them as control variables. Finally, since the same person can be present multiple times in the constructed, and the outcomes for a given individual are likely correlated, we will cluster standard errors at the level of the individual. The table below shows the results.
+To determine whether the program reduced the likelihood of re-arrest before disposition, we will run a regression of whether a re-arrest occurred on the treatment status. Given that defendant's age and number of prior arrests were not balanced, we will also include them as control variables. Finally, since the same person can be present multiple times in the constructed. Therefore, we will assume that treatment is randomized by case and is not correlated with a person's identity, so standard errors do not need to be clustered. The table below shows the results.
 
 ```{r}
 reg_all <-
-  felm(re_arrest ~ treat | 0 | 0 | person_id,
+  felm(re_arrest ~ treat | 0 | 0 | 0,
        constructed)
 
 reg_all_control <-
-  felm(re_arrest ~ treat + age + prior_arrests | 0 | 0 | person_id,
+  felm(re_arrest ~ treat + age + prior_arrests | 0 | 0 | 0,
        constructed)
 
 
@@ -768,7 +768,7 @@ huxreg(
   ),
   stars = c(`*` = 0.1, `**` = 0.05, `***` = 0.01),
   statistics = c("N" = "nobs"),
-  note = "{stars}. Standard errors clustered at person-level in parentheses. All specifications control for age and prior number of arrests."
+  note = "{stars}. All specifications control for age and prior number of arrests."
 )
 ```
 
@@ -786,18 +786,18 @@ plot(constructed, "race", unique(constructed$race))
 plot(constructed, "gender", unique(constructed$gender))
 ```
   
-Note, however, that these results are likely coming from lack of power. As discussed earlier, black men are the most common demographic in the data, representing `r `% of the defendants in the study population. It seems that there is simply not enough precision to evaluate effects on the program on other demographics due to small number of observations from individuals in those categories. This is illustrated by the table below, that estimates heterogenous treatment effects across the same groups as the images. It shows that estimates become too noisy to conclude that there is indeed a difference across groups.
+Note, however, that these results are likely coming from lack of power. As discussed earlier, black men are the most common demographic in the data, representing `r round((constructed %>% filter(race == "Black") %>% select(person_id) %>% n_distinct)*100/(constructed %>% select(person_id) %>% n_distinct))`% of the defendants in the study population. It seems that there is simply not enough precision to evaluate effects on the program on other demographics due to small number of observations from individuals in those categories. This is illustrated by the table below, that estimates heterogeneous treatment effects across the same groups as the images. It shows that estimates become too noisy to conclude that there is indeed a difference across groups.
 
 ```{r}
 reg_gender <-
   felm(
-    re_arrest ~ treat * gender + age + prior_arrests | 0 | 0 | person_id,
+    re_arrest ~ treat * gender + age + prior_arrests | 0 | 0 | 0,
     constructed
   )
 
 reg_race <-
   felm(
-    re_arrest ~ treat * race + age + prior_arrests | 0 | 0 | person_id,
+    re_arrest ~ treat * race + age + prior_arrests | 0 | 0 | 0,
     constructed
   )
 
@@ -810,6 +810,6 @@ huxreg(
      "Treated x Asian" = "treatTreatment:raceAsian"
   ),
    stars = c(`*` = 0.1, `**` = 0.05, `***` = 0.01),
-   note = "{stars}. Standard errors clustered at person-level in parentheses. All specifications control for age and prior number of arrests."
+   note = "{stars}. All specifications control for age and prior number of arrests."
 )
 ```
